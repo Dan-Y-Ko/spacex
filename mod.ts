@@ -1,14 +1,31 @@
-const response = await fetch("https://reqres.in/api/users", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json; charset=UTF-8",
+import * as log from "https://deno.land/std/log/mod.ts";
+
+await log.setup({
+  handlers: {
+    console: new log.handlers.ConsoleHandler("DEBUG"),
   },
-  body: JSON.stringify({
-    name: "Elon Musk",
-    job: "billionaire",
-  }),
+  loggers: {
+    default: {
+      level: "WARNING",
+      handlers: ["console"],
+    },
+  },
 });
 
-const body = await response.json();
+async function downloadLaunchData() {
+  log.info("Downloading launch data...");
+  log.warning("THIS IS A WARNING");
+  const response = await fetch("https://api.spacexdata.com/v3/launches", {
+    method: "GET",
+  });
 
-console.log(body);
+  if (!response.ok) {
+    log.warning("Problem downloading launch data");
+    throw new Error("Launch data download failed.");
+  }
+
+  const launchData = await response.json();
+  //   console.log(launchData);
+}
+
+await downloadLaunchData();
